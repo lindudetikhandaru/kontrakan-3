@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KontrakanPro - Cari & Sewa Kontrakan</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; text-align: center; }
+        .card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .info h3 { margin: 0 0 5px 0; color: #007bff; }
+        .info p { margin: 0; color: #555; }
+        .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .available { background-color: #d4edda; color: #155724; }
+        .booked { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🏠 KontrakanPro Dashboard</h1>
+        <p style="text-align: center; color: #666;">Data ini diambil secara real-time dari Backend API Golang!</p>
+        <div id="daftar-kontrakan">Memuat data dari server...</div>
+    </div>
+
+    <script>
+        async function ambilDataKontrakan() {
+            try {
+                let response = await fetch('http://localhost:8080/api/kontrakan');
+                let data = await response.json();
+                
+                let container = document.getElementById('daftar-kontrakan');
+                container.innerHTML = '';
+
+                data.forEach(item => {
+                    let card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="info">
+                            <h3>${item.nama}</h3>
+                            <p>Kota: <b>${item.kota}</b> | Harga: <b>Rp ${item.harga_bulan.toLocaleString()} / bulan</b></p>
+                        </div>
+                        <div>
+                            <span class="badge ${item.status}">${item.status.toUpperCase()}</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('daftar-kontrakan').innerHTML = '<p style="color:red; text-align:center;">Gagal terhubung ke API Golang. Pastikan server Go sudah dinyalakan!</p>';
+            }
+        }
+
+        ambilDataKontrakan();
+    </script>
+
+</body>
+</html>
